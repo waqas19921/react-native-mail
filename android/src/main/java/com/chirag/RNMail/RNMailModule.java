@@ -125,7 +125,7 @@ public class RNMailModule extends ReactContextBaseJavaModule {
             try {
               Uri fileUri = FileProvider.getUriForFile(
                       getCurrentActivity(),
-                      reactContext.getPackageName() + ".fileprovider",
+                      reactContext.getPackageName() + ".provider",
                       file);
               if (fileUri != null) {
                 // Grant temporary read permission to the content URI
