@@ -68,21 +68,18 @@ RCT_EXPORT_METHOD(mail:(NSDictionary *)options
             [mail setBccRecipients:bccRecipients];
         }
 
-        if (options[@"attachments"]){
-            NSArray *attachments = [RCTConvert NSArray:options[@"attachments"]];
+        if (options[@"attachment"] && options[@"attachment"][@"path"] && options[@"attachment"][@"type"]){
+            NSString *attachmentPath = [RCTConvert NSString:options[@"attachment"][@"path"]];
+            NSString *attachmentType = [RCTConvert NSString:options[@"attachment"][@"type"]];
+            NSString *attachmentName = [RCTConvert NSString:options[@"attachment"][@"name"]];
 
-            for(NSDictionary *attachment in attachments) {
-                if (attachment[@"path"] && attachment[@"type"]) {
-                    NSString *attachmentPath = [RCTConvert NSString:attachment[@"path"]];
-                    NSString *attachmentType = [RCTConvert NSString:attachment[@"type"]];
-                    NSString *attachmentName = [RCTConvert NSString:attachment[@"name"]];
+            // Set default filename if not specificed
+            if (!attachmentName) {
+                attachmentName = [[attachmentPath lastPathComponent] stringByDeletingPathExtension];
+            }
 
-                    // Set default filename if not specificed
-                    if (!attachmentName) {
-                        attachmentName = [[attachmentPath lastPathComponent] stringByDeletingPathExtension];
-                    }
-                    // Get the resource path and read the file using NSData
-                    NSData *fileData = [NSData dataWithContentsOfFile:attachmentPath];
+            // Get the resource path and read the file using NSData
+            NSData *fileData = [NSData dataWithContentsOfFile:attachmentPath];
 
             // Determine the MIME type
             NSString *mimeType;
@@ -130,7 +127,7 @@ RCT_EXPORT_METHOD(mail:(NSDictionary *)options
             } else if ([attachmentType isEqualToString:@"xls"]) {
                 mimeType = @"application/vnd.ms-excel";
             } else if ([attachmentType isEqualToString:@"ics"]) {
-                mimeType = @"text/calendar";
+                mimeType = @"text/calendar"; 
             } else if ([attachmentType isEqualToString:@"xlsx"]) {
                 mimeType = @"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
             }
